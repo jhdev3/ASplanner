@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Akt och Scen - My ASP.NET Application</title>
+
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      type="text/css"
+    />
+    <link href="/css/site.css" rel="stylesheet" />
+
+    <!--Fontawsome-->
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    />
+    <!--Bootstrap jquery script-->
+
+    <!-- For additional Bootstrap: jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+      integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+      integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+      crossorigin="anonymous"
+    ></script>
+
+    <!-- Include Quill TextEditor stylesheet -->
+    <link
+      href="https://cdn.quilljs.com/1.3.6/quill.snow.css"
+      rel="stylesheet"
+    />
+    <!--Bubble Theme-->
+    <link rel="stylesheet" href="//cdn.quilljs.com/1.3.6/quill.bubble.css" />
+
+    <link href="/Content/bootstrap-multiselect.js.css" rel="stylesheet" />
+    <script src="/Scripts/bootstrap-multiselect.min.js"></script>
+  </head>
+  <body class="unfloat">
+    <div id="ActAndStageTable">
+      <!--Making sticky work for Elements on Mobile. -->
+
+      <!-- Header Copy from TW-->
+      <header class="container-fluid stickyLeft">
+        <div class="row">
+          <div class="col-6 col-md-4 text-left">
+            <h3>Demo Site for Act and Stage planner</h3>
+          </div>
+          <div class="col-12 col-md-8 order-3 order-md-2">
+            <h1 class="pageheader">Instructions:</h1>
+            <div class="pageheadercustomtext">
+              Test Quilljs text editor, either in modal or directly in table
+              cell.
+            </div>
+            <div class="pageheadercustomtext">
+              Click "Lägg till akt" to add the table and then blue + to add a
+              table row, in MUSIC there is no Modal editor, in the rest there is
+              except image there u can test upload an image either by choosing
+              file on computer or url <br />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!--Page Header with Inputs
+    Almost center Planner can play with Padding to get it perfekt
+    -->
+      <div class="container-fluid">
+        <div
+          class="row menugroup justify-content-center justify-content-md-end text-center text-uppercase"
+        >
+          <div class="row col-4 align-self-center justify-content-start">
+            <h5>Akt och Scen Planner</h5>
+          </div>
+          <div class="row justify-content-end">
+            <div class="col-4">
+              <a class="btn menuitem" title="Data Import">
+                <i class="fas fa-upload mt-3 agold"></i>
+              </a>
+              <p>Data import</p>
+            </div>
+
+            <div class="col-4">
+              <a
+                class="btn menuitem"
+                onclick="CreateInputAct()"
+                id="AddAct"
+                title="Add Act"
+              >
+                <i class="fas fa-plus agreen mt-3"></i>
+              </a>
+              <p>lägg till akt</p>
+            </div>
+            <div class="col-4">
+              <a
+                class="btn menuitem"
+                id="SaveAll"
+                title="Settings"
+                data-toggle="modal"
+                data-target="#plannerSettingsModal"
+              >
+                <i class="fas fa-cog mt-3 abrightblue"></i>
+              </a>
+              <p>Settings</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Include the Quill library -->
+      <script src="//cdn.quilljs.com/1.3.6/quill.min.js"></script>
+
+      <!--Using client render to show functionality, if enough time i will create some
+    controller logic aswell.
+    -->
+      <div class="container-fluid" id="AppendAct">
+        <!--More width on screen.-->
+      </div>
+
+      <template id="ActContainer">
+        <div class="row menugroup" style="overflow-x: auto">
+          <!--Making it responsive on smaller screens and also dealing with max-width of the text-->
+          <div class="row">
+            <h3 class="agold"></h3>
+            <!--Akt Name-->
+          </div>
+          <div class="row ml-auto">
+            <button
+              class="btn menuitem menuitemSm m-1"
+              onclick="CreateSceneRow(this)"
+              data-tooltip="tooltip"
+              data-placement="bottom"
+              title="Add Scene"
+              data-original-title="Add Scene"
+            >
+              <i class="fas fa-plus amiddleblue"></i>
+            </button>
+            <!--Orginal title tried to get tooltip to work on rendered element-->
+            <button
+              class="btn menuitem menuitemSm m-1"
+              type="button"
+              title="Act Settings"
+            >
+              <i class="fas fa-cog agold"></i>
+            </button>
+          </div>
+          <div class="col-12">
+            <table class="table">
+              <!--Set ID Same as Act Name-->
+              <thead>
+                <!--Set Headers here-->
+              </thead>
+              <tbody>
+                <!--Rows Here-->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </template>
+      <!--This Template Needs to be dynamic later or put as partial and render with Ajax-->
+      <template id="TableHead">
+        <tr class="text-uppercase">
+          <td colspan="1" class="border-top-0"></td>
+          <!--Space for up and down arrows-->
+          <th class="w-25">
+            <!--Setting Max width on image column the column-->
+            Image
+          </th>
+          <th>Scene</th>
+          <th>Storyline</th>
+          <th>Stage</th>
+          <th>Characters</th>
+          <th>Time</th>
+          <th>Music</th>
+          <!--<th colspan="1">-->
+          <!--Duplicate and trash incase of grey background-->
+          <!--</th>-->
+        </tr>
+      </template>
+
+      <!--Copy Past Atm This might need server rendering same as tablehead-->
+      <!--This is used for Demo purpose-->
+      <!--USing onclick="getTargetTdelement(this)" <-Somehow saving the data  data-deltaString="" Used to Store Delta object in for all cells so i can use same modal for every TD element  -->
+      <template id="TableRow">
+        <tr>
+          <th>
+            <!--Width on Th to match button-->
+            <div class="row">
+              <div class="col">
+                <button
+                  class="btn menuitem menuitemSm m-1 up"
+                  style="display: block"
+                  type="button"
+                  title="Move scen up"
+                >
+                  <!--block inlina to be under eachother-->
+                  <i class="fas fa-angle-down adarkblue"></i>
+                </button>
+                <button
+                  class="btn menuitem menuitemSm m-1 down"
+                  type="button"
+                  title="Move Scen down"
+                >
+                  <i class="fas fa-angle-down adarkblue"></i>
+                </button>
+              </div>
+            </div>
+          </th>
+          <td style="vertical-align: middle">
+            <!--Setting inline vertical middle for overrideing bootstrap and making icons look good in center center. Text later using javascript to align on top -->
+            <button
+              class="btn"
+              type="button"
+              title="Add picture"
+              data-toggle="modal"
+              data-target="#addPicture"
+              onclick="getTargetImageButton(this)"
+            >
+              <i class="fas fa-camera fa-4x circle"></i>
+            </button>
+          </td>
+          <td style="vertical-align: middle">
+            <button
+              class="btn"
+              type="button"
+              title="Custom text"
+              onclick="getTargetTdelement(this)"
+              data-deltaString=""
+              data-toggle="modal"
+              data-target="#customText"
+            >
+              <i class="fas fa-plus fa-4x"></i>
+            </button>
+          </td>
+          <td style="vertical-align: middle">
+            <button
+              class="btn"
+              type="button"
+              title="Custom text"
+              onclick="getTargetTdelement(this)"
+              data-deltaString=""
+              data-toggle="modal"
+              data-target="#customText"
+            >
+              <i class="fas fa-plus fa-4x"></i>
+            </button>
+          </td>
+          <td style="vertical-align: middle">
+            <button
+              class="btn"
+              type="button"
+              title="Custom text"
+              onclick="getTargetTdelement(this)"
+              data-deltaString=""
+              data-toggle="modal"
+              data-target="#customText"
+            >
+              <i class="fas fa-plus fa-4x"></i>
+            </button>
+          </td>
+          <td style="vertical-align: middle">
+            <button
+              class="btn"
+              type="button"
+              title="Custom text"
+              onclick="getTargetTdelement(this)"
+              data-deltaString=""
+              data-toggle="modal"
+              data-target="#customText"
+            >
+              <i class="fas fa-plus fa-4x"></i>
+            </button>
+          </td>
+          <td style="vertical-align: middle">
+            <button
+              class="btn"
+              type="button"
+              title="Custom text"
+              onclick="getTargetTdelement(this)"
+              data-deltaString=""
+              data-toggle="modal"
+              data-target="#customText"
+            >
+              <i class="fas fa-plus fa-4x"></i>
+            </button>
+          </td>
+          <td class="Plus" style="vertical-align: middle">
+            <!--Klass + to toggle blur etc-->
+            <div class="editor">
+              <i class="fas fa-plus fa-4x"></i>
+            </div>
+            <div class="text-center saveButton" style="display: none">
+              <button type="button" class="btn menuitem menuitemSm">
+                <i class="fas fa-save abrightblue"></i>
+              </button>
+            </div>
+          </td>
+          <th>
+            <!--On both Th-->
+            <!--Icons th just costumizing td then:)-->
+            <!--Copy Scene-->
+            <button
+              class="btn menuitem menuitemSm m-1"
+              style="display: block"
+              onclick="DuplicateThisSceneRow(this)"
+              data-tooltip="tooltip"
+              data-placement="bottom"
+              title="Duplicate Scene"
+              data-original-title="Duplicate Scene"
+            >
+              <i class="far fa-copy ateal"></i>
+            </button>
+            <!--Delete Scene-->
+            <button
+              class="btn menuitem menuitemSm m-1"
+              onclick="DeleteThisScene(this)"
+              type="button"
+              title="Delete this Scene"
+            >
+              <i class="fas fa-trash-alt ared"></i>
+            </button>
+          </th>
+        </tr>
+      </template>
+
+      <!--No Modal opening for Editing -->
+      <script>
+        let toolbarOptions = [
+          [{ header: [1, 2, false] }], //Option to more Headers just add 3 for etc false is for normal, Instead of 1 can Say header subHeader
+          ["bold", "italic", "underline"],
+          ["link", "blockquote"],
+          [{ list: "ordered" }, { list: "bullet" }],
+          [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+          [{ align: [] }], //Text Align,
+          ["clean"],
+        ]; //Remove formating Tx;
+
+        //Adding Editor to Div with Name Editor and also making that clickable with + Icon
+        $(document).on("click", ".editor", function () {
+          if (!$(this).hasClass("ql-container")) {
+            // console.log(this);
+            //Setting Style On td element when text to align top and left mostly for the Toolbar on snow:)
+            this.parentNode.style.verticalAlign = null;
+            this.parentNode.style.textAlign = "left";
+
+            let quill = new Quill(this, {
+              //Creating new one if not exists
+              modules: {
+                toolbar: toolbarOptions,
+              },
+              placeholder: "Type here...",
+              theme: "snow",
+            });
+          }
+        });
+      </script>
+
+      <!--Start with Upload Image Later -->
+      <!--Image Chars Time  Scen Normal Input types <  ExtraInfo Music -> Editors -->
+      <!--FocusIn and  out events with snow theme Bubble works without but incase of save need to add that-->
+      <script>
+        $("#AppendAct").on("focusout", ".Plus", function (e) {
+          if (this.contains(event.relatedTarget)) {
+            // Related elements for in this case the toolbar :) that is over the editor in this case and save button under
+            return;
+          }
+          //When focusout :)
+          let quillToolbar =
+            this.querySelector(".ql-toolbar"); /*Toolbar is above editor*/ // Same but with jquery $(this).closest('td').find('.ql-toolbar');
+          this.querySelector(".editor").style.border = "none";
+          let saveButton = this.querySelector(".saveButton"); // Same but with jquery $(this).closest('td').find('.ql-toolbar');
+          $(saveButton).hide();
+          $(quillToolbar).hide();
+        });
+
+        $("#AppendAct").on("focusin", ".Plus", function () {
+          let quillToolbar = this.querySelector(".ql-toolbar"); // Same but with jquery $(this).closest('td').find('.ql-toolbar');
+          this.querySelector(".editor").style.border = null; //Border for the toolbox :)
+          let saveButton = this.querySelector(".saveButton"); // Same but with jquery $(this).closest('td').find('.ql-toolbar');
+          $(saveButton).show();
+          $(quillToolbar).show();
+        });
+      </script>
+
+      <script>
+        //Move Row Up And Down
+        //Document on ready doesnt work beacuse this demo dynamicly add everything.
+        //So smth that is already there i greate the event listner on div everthing appends in :)
+        $("#AppendAct").on("click", ".up, .down", function () {
+          var row = $(this).parents("tr:first");
+          if ($(this).is(".up")) {
+            row.insertBefore(row.prev());
+          } else if ($(this).is(".down")) {
+            row.insertAfter(row.next());
+          }
+        });
+      </script>
+
+      <!--Dynamically creating table row delete etc-->
+      <script>
+        //Instead of ParentNode use Closets https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
+        function DeleteThisScene(node) {
+          //When removing option is to send the right Id with Ajax and Remove in database
+          let tr = node.closest("tr"); //Find the tr item.
+          tr.parentNode.removeChild(tr); //Remove from tbody :)
+        }
+        function CreateSceneRow(node) {
+          const parent = node.parentNode.parentNode; //append to
+          let template = document.querySelector("#TableRow");
+          let clone = document.importNode(template.content, true);
+          parent.querySelector("tbody").appendChild(clone);
+        }
+
+        function DuplicateThisSceneRow(node) {
+          const tr = node.parentNode.parentNode; //Find Tr.
+          const clone = tr.cloneNode(true); //Clone Tr
+          tr.parentNode.insertBefore(clone, tr); //Insert in tbody
+        }
+
+        let akt = 1; //For Demo Porpouse Later it needs a name ;)
+        function CreateInputAct() {
+          let template = document.querySelector("#ActContainer");
+          // Populate the  src at runtime.
+          let clone = document.importNode(template.content, true);
+
+          let table = clone.querySelector("table"); //First Div
+          table.id = "Akt" + akt; // Setting id to data:)
+          //TableHead
+          let tableHead = document.querySelector("#TableHead");
+          let cloneTH = document.importNode(tableHead.content, true);
+          table.querySelector("thead").appendChild(cloneTH);
+
+          let h1 = clone.querySelector("h3");
+          h1.textContent = "Akt " + akt;
+
+          ++akt;
+          document.querySelector("#AppendAct").appendChild(clone);
+        }
+      </script>
+
+      <!--
+By using Quill Editor an option for read and write access is to hide toolbar
+    if no write access and also make the Editor readable only :)
+-->
+
+      <!--Choose Columns for the planer-->
+      <div
+        class="modal fade"
+        id="plannerSettingsModal"
+        data-backdrop="static"
+        data-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="plannerSettingsModal"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div
+              class="modal-header justify-content-center adarkbluebackground"
+            >
+              <h5 class="modal-title awhite" id="staticBackdropLabel">
+                View settings
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span class="agrey" aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body text-left text-uppercase">
+              <form>
+                <div class="row justify-content-center align-items-center">
+                  <div class="col-3">
+                    <p>Columns</p>
+                    <input type="checkbox" id="Image" name="Image" value="" />
+                    <label for="Image"> Image</label>
+                  </div>
+                  <div class="col-6">
+                    <label for="Name">Anpassat Namn:</label>
+                    <input class="form-control" type="text" name="Name" />
+                  </div>
+                </div>
+                <div class="row justify-content-center align-items-center">
+                  <div class="col-3">
+                    <input type="checkbox" id="Scen" name="Scen" value="" />
+                    <label for="Image"> Scen</label>
+                  </div>
+                  <div class="col-6">
+                    <input class="form-control" type="text" name="ScenName" />
+                  </div>
+                </div>
+                <div class="row justify-content-center align-items-center">
+                  <div class="col-3">
+                    <input
+                      type="checkbox"
+                      id="Characters"
+                      name="Characters"
+                      value=""
+                    />
+                    <label for="Characters"> Characters</label>
+                  </div>
+                  <div class="col-6">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="CharactersName"
+                    />
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col">
+                    <label for="AccessRead"> Access read:</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="AccessRead"
+                      value=""
+                    />
+                  </div>
+                  <div class="col">
+                    <label for="AccessWrite">Access wirte:</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="AccessWrite"
+                    />
+                  </div>
+                </div>
+                <div class="text-center">
+                  <button type="button" class="btn menuitem menuitemSm">
+                    <i class="fas fa-save abrightblue"></i>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--Add Image modal were u either can upload or link image to URL-->
+      <div
+        class="modal fade"
+        id="addPicture"
+        data-backdrop="static"
+        data-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="addPicture"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div
+              class="modal-header justify-content-center adarkbluebackground"
+            >
+              <h5 class="modal-title awhite" id="staticBackdropLabel">
+                Lägg till bild
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span class="agrey" aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body text-left">
+              <form enctype="multipart/form-data">
+                <div class="row">
+                  <div class="col-5">
+                    <div class="form-group">
+                      <label for="URL">Url: </label>
+                      <input
+                        type="text"
+                        id="srcLink"
+                        name="URL"
+                        class="form-control"
+                      />
+                      <label for="uploadImage">Ladda upp bild: </label>
+                      <input
+                        type="file"
+                        id="imageInput"
+                        name="uploadImage"
+                        class="form-control"
+                        accept="image/png, image/gif, image/jpeg"
+                      />
+                    </div>
+                  </div>
+                  <div class="col-6 pictureCont">
+                    <label for="previewImage">Preview image: </label>
+                    <img src="" alt="PreviewImg" id="previewImage" />
+                  </div>
+                </div>
+                <div class="text-center">
+                  <button
+                    type="button"
+                    class="btn menuitem menuitemSm"
+                    onclick="saveImage()"
+                  >
+                    <i class="fas fa-save abrightblue"></i>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        imageInput.onchange = (event) => {
+          let selectedFile = event.target.files[0];
+          if (selectedFile) {
+            previewImage.src = URL.createObjectURL(selectedFile);
+          }
+        };
+        /* for testing image https://picsum.photos/200
+         */
+        srcLink.onchange = (event) => {
+          let selectedValue = event.target.value;
+          if (selectedValue) {
+            previewImage.src = selectedValue;
+          }
+        };
+      </script>
+
+      <script>
+        //OnSave -Clicking Save
+        let targetImageButton; //Fetch This
+        function getTargetImageButton(node) {
+          targetImageButton = node;
+          console.log(node);
+        }
+        function saveImage() {
+          //Target Src Prewview
+          ImageSrc = document.querySelector("#previewImage").src;
+          if (ImageSrc) {
+            targetImageButton.innerHTML = `<div class="pictureCont image-scen"><img src="${ImageSrc}" alt="Picture that describe a scene" /> </div>`;
+          }
+          console.log(ImageSrc);
+          //If Empty Do nothing just hide Modal
+
+          //If not Empty write image to Button :)
+          $("#addPicture").modal("hide");
+          //Clear the InputFields
+          document.querySelector("#srcLink").value = "";
+          document.querySelector("#imageInput").value = "";
+          document.querySelector("#previewImage").src = "";
+        }
+      </script>
+
+      <!--Incase of having modal instead of writing direct into Table cell-->
+      <!--Were u can customize text-->
+      <div
+        class="modal fade"
+        id="customText"
+        data-backdrop="static"
+        data-keyboard="false"
+        tabindex="-1"
+        aria-labelledby="addPicture"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered" role="document">
+          <div class="modal-content">
+            <div
+              class="modal-header justify-content-center adarkbluebackground"
+            >
+              <h5 class="modal-title awhite" id="staticBackdropLabel">
+                "Title + Column header"
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span class="agrey" aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body text-left">
+              <div class="form-group">
+                <!--Input Field for submit-->
+                <!--<label for="about">About: </label>-->
+                <!--Need for a label?-->
+                <input id="deltaObject" name="deltaObject" type="hidden" />
+                <!--Used -->
+                <!-- Create the editor container -->
+                <div id="editor"></div>
+              </div>
+              <div class="text-center">
+                <button
+                  type="button"
+                  onclick="testQuill()"
+                  class="btn menuitem menuitemSm"
+                >
+                  <i class="fas fa-save abrightblue"></i>
+                </button>
+              </div>
+            </div>
+            <div id="TestOutput"></div>
+          </div>
+        </div>
+      </div>
+
+      <!--Other good Editors:
+    Not sure how good the Free Versions are:
+    https://www.tiny.cloud/
+
+    https://ckeditor.com/
+    -->
+      <!-- Include the Quill library -->
+
+      <!-- Initialize Quill editor -->
+      <script>
+        //From: https://quilljs.com/docs/quickstart/
+        //Quill Delta To HTML nuget for Delta object to html in .NET for backend use: https://www.nuget.org/packages/Quill.Delta/
+        var quill = new Quill("#editor", {
+          //Creates the Editor.
+          modules: {
+            toolbar: toolbarOptions,
+          },
+          placeholder: "Compose an epic...",
+          theme: "snow", //Theme
+        });
+      </script>
+
+      <script>
+        //Front End Function to get HTML that Editor generats i.e styles etc
+        //Using this for demo this could done in a controller or razorpage with ajax render. Data needs to saved aswell ;)
+        function quillGetHTML(inputDelta) {
+          var tempCont = document.createElement("div");
+          new Quill(tempCont).setContents(inputDelta);
+          return tempCont.getElementsByClassName("ql-editor")[0].innerHTML;
+        }
+        //Setting content in a text editor modal modal
+        function quillSetContents() {
+          let deltaContents = targetButtonElement.dataset.deltaString;
+          if (deltaContents) {
+            quill.setContents(JSON.parse(deltaContents));
+          } else {
+            //Setting Empty Quill Lets se if it can be done in other way
+            quill.setContents(
+              { insert: "\n" } //empty returns delta /quill editor '/n/;
+            );
+          }
+        }
+
+        //Export Data to other object Form handling:
+        let customText = document.querySelector("#customText");
+        let container = document.querySelector("#TestOutput");
+
+        let targetButtonElement; //Were to put text and what td was pressed
+
+        function getTargetTdelement(node) {
+          targetButtonElement = node;
+          quillSetContents();
+        }
+
+        //Function Used to test and show how to parse / stringfy and view Delta object.
+        function testQuill() {
+          // Populate TD Element on "Save"
+          //Binding data to an input element incase of sending as a from.
+          let deltaObject = document.querySelector("#deltaObject");
+          deltaObject.value = JSON.stringify(quill.getContents());
+          //console.log("Stringify");
+          //console.log(deltaObject.value);
+          targetButtonElement.dataset.deltaString = deltaObject.value; //Saving in Dataset intead of having somekind of Array with Id etc beacuse I assume that ID on this should match backend aswell.
+
+          // No back end to actually submit to putting info in  Td -> button !
+          let html = quillGetHTML(JSON.parse(deltaObject.value)); //Testing to Parse Json object that was stringfied :)
+          //console.log("Delta object");
+          //console.log(JSON.parse(deltaObject.value));
+          targetButtonElement.innerHTML = html; //Adding everthing inside button it will work same as <a> over a div or imgage to get modal up agian.
+          $("#customText").modal("hide");
+          checkEmptyButton();
+        }
+      </script>
+
+      <script>
+        //Check for empty Content in button etc to change back to + Icon and also change background color :) :)
+        function checkEmptyButton() {
+          // Check all Child nodes :)
+          if (targetButtonElement.textContent.trim() === "") {
+            console.log("✅ Element is empty");
+            targetButtonElement.innerHTML = '<i class="fas fa-plus fa-4x"></i>';
+            targetButtonElement.parentNode.style.verticalAlign = "middle";
+            targetButtonElement.parentNode.style.textAlign = null;
+          } else {
+            console.log("⛔️ Element is NOT empty");
+            targetButtonElement.parentNode.style.verticalAlign = null;
+            targetButtonElement.parentNode.style.textAlign = "left";
+          }
+        }
+        //checkEmptybutton function could also work with some small modifications on div.Editor and add it in foucus out in case of showing + on empty cell like modal does
+      </script>
+    </div>
+
+    <script>
+      $(function () {
+        $('[data-tooltip="tooltip"]').tooltip();
+      });
+    </script>
+  </body>
+</html>
