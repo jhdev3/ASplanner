@@ -273,38 +273,37 @@ mp-0 {
   margin: 0;
 }
 
-
-
 /*My addon styles*/
 
 .backgroundGrey {
-    background-color: rgb(242, 242, 242);
+  background-color: rgb(242, 242, 242);
 }
 
 thead th {
-    background-color: rgb(242, 242, 242);
+  background-color: rgb(242, 242, 242);
 }
 .table th,
 .table td {
-    /*Remove some padding got big border no padding needed*/
-    /*border: none;*/ /*Removes Bootstrap grey Border*/
-    padding: 0px;
+  /*Remove some padding got big border no padding needed*/
+  /*border: none;*/ /*Removes Bootstrap grey Border*/
+  padding: 0px;
 }
 
 th {
-    border: none !important;
+  border: none !important;
 }
 
 tbody td {
-    /*Align Icons in the middle ov td element*/
-    text-align: center;
-    border: 7px solid rgb(242, 242, 242);
-    border-collapse: collapse;
+  /*Align Icons in the middle ov td element*/
+  text-align: center;
+  border: 7px solid rgb(242, 242, 242);
+  border-collapse: collapse;
 }
 tbody th /*Elements with buttons to push :)*/ {
-    /*    background-color: rgb(242, 242, 242); And Uncomment last Th TableHead to make Grey backgrounds
-*/ vertical-align: middle !important; /*Overrides bootstrap*/
-   width: 50px;
+  /*    background-color: rgb(242, 242, 242); And Uncomment last Th TableHead to make Grey backgrounds
+*/
+  vertical-align: middle !important; /*Overrides bootstrap*/
+  width: 50px;
 }
 
 td button {
@@ -324,9 +323,8 @@ td i {
 }
 /*Inline style in template ActContainer with overflow x-auto works to manage max-width  in a responsive way. making it scrollable incase of wide cells*/
 
-
 .ql-tooltip {
-    left: 0 !important; /*Fixed issue of not showing link etc*/
+  left: 0 !important; /*Fixed issue of not showing link etc*/
 }
 
 /*td * {
@@ -335,19 +333,19 @@ td i {
 
 /*Width or height on Picture Container decides the size this responsive aswell*/
 .pictureCont > img {
-    inline-size: 100%;
-    aspect-ratio: 16 / 9;
-    object-fit: cover;
+  inline-size: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
 }
 /*Css trick to hide img if empty src*/
-img[src=""] 
-{
-    display: none;
+img[src=""] {
+  display: none;
 }
 
-.image-scen 
-{
-    min-width: 250px; /*Setting min-width on image Max is set on table header for image with w-25 boostrap*/
-
+.image-scen {
+  min-width: 250px; /*Setting min-width on image Max is set on table header for image with w-25 boostrap*/
 }
 
+.editor {
+  min-width: 250px;
+}
