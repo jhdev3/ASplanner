@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Import data from Excel - My ASP.NET Application</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      type="text/css"
+    />
+    <link href="/ASplanner/css/Site.css" rel="stylesheet" />
+
+
+    <!--Fontawsome-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <!--Bootstrap jquery script-->
+    
+
+    <!-- For additional Bootstrap: jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+</head>
+<body class="unfloat">
+
+    <div id="ActAndStageTable"> <!--Making sticky work for Elements on Mobile. -->
+
+        <!-- Header Copy from TW-->
+        <header class="container-fluid stickyLeft">
+            <div class="row">
+                <div class="col-6 col-md-4 text-left">
+                </div>
+                <div class="col-12 col-md-4 text-center order-3 order-md-2">
+                    <h1 class="pageheader"></h1>
+                    <div class="pageheadercustomtext"></div>
+                    <h2 class="pagesubheader">Import data from Excel</h2>
+                </div>
+                </div>
+            </div>
+        </header>
+
+            
+
+<!--Additional Styles-->
+<style>
+    .awhiteBackground { /*White on Icons for each Scen not Important so menu hover works aswell */
+        background: rgb(255,255,255); /*white*/
+    }
+
+    .SceneList li {
+        background-color: rgb(242, 242, 242); /*Background grey*/
+        margin-bottom: 1em;
+    }
+
+
+    /*Rotating Button on collapsed*/
+    button.btn.menuitem.menuitemSm.m-1.tc i /*Input showing*/ {
+        transform: rotate(180deg);
+        transition: 0.5s;
+    }
+    /*When Collapsed*/
+    button.btn.menuitem.menuitemSm.m-1.tc.collapsed i {
+        transform: rotate(0deg);
+    }
+</style>
+<!--Page Header with Inputs-->
+<div class="container">
+    <div class="row menugroup justify-content-end">
+        <div class="form-inline">
+            <input class="form-control" id="uploadExcel" type="file" name="ExcelFile" accept=".xls, .xlsx" />
+            <button id="ImportFile" class="btn btn-outline-primary m-1">Import from excel</button>
+        </div>
+
+        <div class="row text-center text-uppercase ml-2">
+            <div class="col-4">
+                <a class="btn menuitem" id="AddAct" onclick="CreateInputAct()" title="Add Act">
+                    <i class="fas fa-plus agreen mt-3"></i>
+                </a>
+                <p>lägg till akt</p>
+            </div>
+            <div class="col-4">
+                <a class="btn menuitem" id="AddParticipant" title="Add Participants" data-toggle="modal" data-target="#participantModal">
+                    <i class="fas fa-users mt-3 amiddleblue"></i>
+                </a>
+                <p>deltagare</p>
+            </div>
+            <div class="col-4">
+                <a class="btn menuitem" id="SaveAll" title="Save"><i class="fas fa-save mt-3 abrightblue"></i></a>
+                <p>Save</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!--Adding Templates for ImportData-->
+
+<!-- AddAct -->
+<template id="ActTemplate">
+    <div class="row menugroup justify-content-sm-start justify-content-md-end">
+        <div class="form-group col-9 col-md-4">
+            <label for="ActName">Act Name:</label>
+            <input class="form-control" type="text" name="ActName">
+        </div>
+        <!--Buttons-->
+        <div class="col-2 col-md-4 align-self-md-center text-right">
+            <!--Add-->
+            <button class="btn menuitem menuitemSm m-1" onclick="CreateInputScene(this)" data-tooltip="tooltip" data-placement="bottom" title="Add Scene" data-original-title="Add Scene"><i class="fas fa-plus amiddleblue"></i></button> <!--Orginal title tried to get tooltip to work on rendered element-->
+            <!--Delete-->
+            <button class="btn menuitem menuitemSm m-1" onclick="DeleteThisAct(this)" type="button" title="Delete this act">
+                <i class="fas fa-trash-alt ared"></i>
+            </button>
+            <!--Toogle-->
+            <button class="btn menuitem menuitemSm m-1 tc" type="button" data-toggle="collapse" data-target="">
+                <!--tc class added for Transformation in Site Toggle Collapse :)-->
+                <i class="fa fa-angle-down"></i>
+            </button>
+        </div>
+        <div class="col-12">
+            <ol class="SceneList collapse show">
+                <!--Collapse Toggle show is for showing at start-->
+            </ol>
+        </div>
+    </div>
+</template>
+
+
+<!--Inputs in this order: Scennamn	Scene duration	Page	ExtraInfo	Sortering-->
+<template id="InputSceneTemplate">
+    <li>
+        <div class="row">
+            <div class="col-12 col-md-7">
+                <label for="SceneName">Scene name:</label>
+                <input class="form-control" type="text" name="SceneName" style="max-width:100%;"> <!--Overrinding Site.Css max with on Input-->
+            </div>
+            <div class="col-12 col-md-3">
+                <label for="SceneDuration">Scene duration:</label>
+                <input class="form-control" type="text" name="SceneDuration">
+            </div>
+            <div class="col-12 col-md-2">
+                <label for="Page">Page:</label>
+                <input class="form-control" type="text" name="Page">
+            </div>
+        </div>
+        <div class="row align-items-center">
+            <!--Vertical Align center maybe bottom looks better-->
+            <div class="col-6">
+                <label for="ExtraInfo">ExtraInfo:</label>
+                <input class="form-control" type="text" name="ExtraInfo">
+                <input type="number" name="SortOrder" style="display:none;"> <!--Hides the sorting order Setting Incase its nessesary or not either have it as input or let Controller set it for SQL-->
+            </div>
+            <!--Buttons-->
+            <div class="col-6 text-right">
+                <!--Duplicate Scene Adding or deleting another div or container need fix javascript aswell-->
+                <button class="btn menuitem menuitemSm m-1 awhiteBackground" onclick="DuplicateThisScene(this)" data-tooltip="tooltip" data-placement="bottom" title="Duplicate Scene" data-original-title="Duplicate Scene">
+                    <i class="far fa-copy ateal"></i>
+                </button>
+                <!--Remove Scene-->
+                <button class="btn menuitem menuitemSm m-1 awhiteBackground" onclick="DeleteScene(this)" data-tooltip="tooltip" data-placement="bottom" title="Remove Scene" data-original-title="Remove Scene">
+                    <i class="fas fa-trash-alt ared"></i>
+                </button>
+            </div>
+        </div>
+    </li>
+</template>
+
+
+
+<script>
+    //Might be needing more Functionality here to update input names incase of bind input to model.
+
+    //Could improve this with Element.closest() and traverse back to find id but then i need to add id to button aswell.
+
+    function DeleteThisAct(node) {
+        let div = node.parentNode.parentNode; //Find the div item item with class="row menugroup justify-content-sm-start justify-content-md-end maybe id aswell
+        console.log(div);
+        div.parentNode.removeChild(div);
+    }
+
+    function DeleteScene(node)
+    {
+        let li = node.parentNode.parentNode.parentNode; //Find the list item.
+        li.parentNode.removeChild(li);
+    }
+    function DuplicateThisScene(node)
+    {
+        const li = node.parentNode.parentNode.parentNode; //Find the list item.
+        const clone = li.cloneNode(true); //Clone the List item
+        li.parentNode.insertBefore(clone, li) //OL list li.parentNode
+
+    }
+
+    //Not Sure If this + Adds Scenes/Acts Should be here when import but if its good keep it.
+    function CreateInputScene(node) {
+        const parent = node.parentNode.parentNode;//my append
+        let template = document.querySelector('#InputSceneTemplate');
+        let clone = document.importNode(template.content, true);
+
+        // Populate the src at runtime handle the clone element.
+
+        //were to append template 
+        parent.querySelector('.SceneList').appendChild(clone);
+    }
+
+    let PlusAct = 0;//Used for No import normal adding
+    function CreateInputAct() {
+        let template = document.querySelector('#ActTemplate');
+        let clone = document.importNode(template.content, true);
+                // Populate the src at runtime.
+
+        let firstDiv = clone.querySelector("div"); //First Div
+        firstDiv.id = "PlusAct-" + PlusAct; // Setting id to data:)
+        //Toggle
+        let toggleButton = clone.querySelectorAll("button"); //Toggle Divs
+        toggleButton[2].dataset.target = "#Toggle" + PlusAct; //Nr of button
+        clone.querySelector("ol").id = "Toggle" + PlusAct; //Ol Element
+        ++PlusAct;
+        //Were to Append Template
+        document.querySelector('#AppendAct').appendChild(clone);
+    }
+</script>
+<div class="container" id="AppendAct">
+
+</div>
+
+<!--Add participants modal with a select input that might need to change to multiselect-->
+<div class="modal fade" id="participantModal" data-backdrop="static" data-keyboard="false" tabindex="-1" aria-labelledby="participantModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header justify-content-center adarkbluebackground">
+                <h5 class="modal-title awhite" id="staticBackdropLabel">Deltagare</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span class="agrey" aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body text-left">
+                <form>
+                    <div class="form-group">
+                        <label for="">Välj lag</label>
+                        <select id="" class="form-control" id="">
+                            <option value="">??</option>
+                            <option value="">??</option>
+                            <option value="">??</option>
+                            <option value="">??</option>
+                        </select>
+                    </div>
+                    <div class="text-center">
+                        <button type="button" class="btn menuitem menuitemSm">
+                            <i class="fas fa-save abrightblue"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!--Import Xlsx library.-->
+<script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.18.8/package/dist/xlsx.full.min.js"></script>
+
+<script>
+
+    //This script Generate the input fields functions used when reading excel file
+
+    //This is the order that input will place into.
+    //My Header Columns in test document and order.
+
+    //Akt	Scennamn	Scenlängd	Page	ExtraInfo	Sortering
+    //Act 1	Vorspiel	00: 13			10
+    //Act 1	He! Ho! Waldhüter ihr, 00: 09	Sida: 52		20
+    //Act 1	Recht so! Habt Dank! – Ein wenig Rast.	00: 07	Sida: 58		30
+
+    //Add Scen li
+    function AddSceneInputs(placeAt, sceneObject) {
+        let template = document.querySelector('#InputSceneTemplate');
+        let clone = document.importNode(template.content, true);
+
+        //Populate the src at runtime. Input field from template above.
+        let inputs = clone.querySelectorAll('input');
+        for (let i = 0; i < inputs.length; i++) {
+            inputs[i].value = Object.values(sceneObject)[i + 1]//Acti is i 0;
+        }
+        placeAt.querySelector('.SceneList').appendChild(clone);
+
+    }
+    //Add Act Div
+    function AddActElement(data) {
+        let template = document.querySelector('#ActTemplate');
+        let clone = document.importNode(template.content, true);
+
+        // Populate the src at runtime.
+        let firstDiv = clone.querySelector("div"); //First Div
+        firstDiv.id = data.replaceAll(" ", "-"); // Setting id to data:)
+        //Toggle
+        let toggleButton = clone.querySelectorAll("button"); //Toggle Divs Could also target tc :)
+        toggleButton[2].dataset.target = "#Toggle" + data.replaceAll(" ", "-");
+
+        clone.querySelector("ol").id = "Toggle" + data.replaceAll(" ", "-"); //Ol Element
+
+        if (data == "No Act") {
+            clone.querySelector('input').disabled = true; //Disabled if there is no Acts;
+        }
+        else {
+            clone.querySelector('input').value = data;
+            clone.querySelector('input').disabled = false;
+        }
+        document.querySelector('#AppendAct').appendChild(clone);
+    }
+</script>
+<script>
+    //Import and read Excel file
+
+    //Limits the sheets to 1 reads the first sheet.
+    function parseExcel(file) {
+
+        let Filereader = new FileReader();
+        Filereader.onload = function (e) {
+            let data = e.target.result;
+            let excelDoc = XLSX.read(data, {
+                type: "binary",
+            });
+            let sheetFirstSheet = excelDoc.Sheets[excelDoc.SheetNames[0]]; //Only first Sheet
+            let jsonObject = XLSX.utils.sheet_to_json(sheetFirstSheet, {
+                defval: '',//Empty Cell
+                raw: false,   //Fixing time format bugg. Scene Duration.
+            });
+            console.log(jsonObject);//JsonObject of the imported data.
+
+            //What happens to data add here
+            //Start Render Input Fields and populating them either keep this or place this in a callback function
+            for (scene of jsonObject) {
+                let actValue = Object.values(scene)[0].trim(); //Act is first Object in the list trim to remove space before and after incase it exists
+                //No Act/Empty Act
+                if (actValue == "") {
+                    actValue = "No Act"; //When there is no Acts Assign here then use in template aswell. Need name for QuerySelector below.
+                }
+
+                let ActElment = document.querySelector(`#${actValue.replaceAll(" ", "-")}`); //Replace no Space for queryselector
+                if (!ActElment) {
+                    AddActElement(actValue);//Create a place to put my Scenes in for specifik Act.
+                    ActElment = document.querySelector(`#${actValue.replaceAll(" ", "-")}`); //Should now not be null
+                }
+
+                AddSceneInputs(ActElment, scene); //Add Scene inputs
+                //Stop render.
+            }
+        };
+
+        Filereader.onerror = function (ex) {
+            console.log(ex);
+        };
+
+        Filereader.readAsBinaryString(file);
+    };
+
+
+    //Input eventlistners.
+    let selectedFile;
+    document.getElementById("uploadExcel").addEventListener("change", (event) => {
+        selectedFile = event.target.files[0];
+    });
+    document.getElementById("ImportFile").addEventListener("click", (event) => {
+
+        document.querySelector('#AppendAct').innerHTML = ''; //Removes all childs incase of changing document or doubble clicking import.
+        parseExcel(selectedFile);
+    });
+</script>
+
+ </div>
+    <script>
+        $(function () { $('[data-tooltip="tooltip"]').tooltip() })
+    </script>
+
+</body>
+</html>
