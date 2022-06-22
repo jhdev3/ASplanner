@@ -707,6 +707,7 @@ By using Quill Editor an option for read and write access is to hide toolbar
           if (selectedFile) {
             let image = addPicture.querySelector("img"); //using addpicture sense this modal will only have max 1 img element in it
             //If Img element exists or not.
+            console.log(image);
             if (image == null) {
               CreateImg(URL.createObjectURL(selectedFile));
             } else {
@@ -728,6 +729,14 @@ By using Quill Editor an option for read and write access is to hide toolbar
             }
           }
         };
+
+        function CreateImg(imageSrc) {
+          //Targeting addPicture should only be 1 image in that Modal
+          image = document.createElement("img");
+          image.src = imageSrc;
+          image.alt = "Picture that describe a scene";
+          addPicture.querySelector(".pictureCont").appendChild(image);
+        }
       </script>
 
       <script>
@@ -763,15 +772,7 @@ By using Quill Editor an option for read and write access is to hide toolbar
             addPicture.querySelector("img").remove(); //Removeing image element for next td or update:)
           }
         }
-
-        function CreateImg(imageSrc) {
-          image = document.createElement("img");
-          image.src = imageSrc;
-          image.alt = "Picture that describe a scene";
-          document.querySelector(".pictureCont").appendChild(image);
-        }
       </script>
-
       <!--Incase of having modal instead of writing direct into Table cell-->
       <!--Were u can customize text-->
       <div
