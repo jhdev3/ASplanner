@@ -346,6 +346,6 @@ img[src=""] {
   min-width: 250px; /*Setting min-width on image Max is set on table header for image with w-25 boostrap*/
 }
 
-.editor {
+.ql-toolbar /*Setting min width on small devices same as image screen atm, add a value that that works well on all screen seizes and makes a nice toolbar view :)*/ {
   min-width: 250px;
 }

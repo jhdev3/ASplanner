@@ -481,10 +481,11 @@ By using Quill Editor an option for read and write access is to hide toolbar
               </button>
             </div>
             <div class="modal-body text-left text-uppercase">
-              <form>
+              <div id="ColumnContainer">
                 <div class="row justify-content-center align-items-center">
-                  <div class="col-3">
+                  <div class="col-4">
                     <p>Columns</p>
+                    <!--Header-->
                     <input type="checkbox" id="Image" name="Image" value="" />
                     <label for="Image"> Image</label>
                   </div>
@@ -494,7 +495,7 @@ By using Quill Editor an option for read and write access is to hide toolbar
                   </div>
                 </div>
                 <div class="row justify-content-center align-items-center">
-                  <div class="col-3">
+                  <div class="col-4">
                     <input type="checkbox" id="Scen" name="Scen" value="" />
                     <label for="Image"> Scen</label>
                   </div>
@@ -503,7 +504,7 @@ By using Quill Editor an option for read and write access is to hide toolbar
                   </div>
                 </div>
                 <div class="row justify-content-center align-items-center">
-                  <div class="col-3">
+                  <div class="col-4">
                     <input
                       type="checkbox"
                       id="Characters"
@@ -520,35 +521,115 @@ By using Quill Editor an option for read and write access is to hide toolbar
                     />
                   </div>
                 </div>
-                <div class="row">
-                  <div class="col">
-                    <label for="AccessRead"> Access read:</label>
+
+                <div class="row justify-content-center align-items-center">
+                  <div class="col-4">
                     <input
-                      class="form-control"
-                      type="text"
-                      name="AccessRead"
+                      type="checkbox"
+                      id="Duration"
+                      name="Duration"
                       value=""
                     />
+                    <label for="Duration"> Duration</label>
                   </div>
-                  <div class="col">
-                    <label for="AccessWrite">Access wirte:</label>
+                  <div class="col-6">
                     <input
                       class="form-control"
                       type="text"
-                      name="AccessWrite"
+                      name="DurationName"
                     />
                   </div>
                 </div>
-                <div class="text-center">
-                  <button type="button" class="btn menuitem menuitemSm">
-                    <i class="fas fa-save abrightblue"></i>
-                  </button>
+
+                <div class="row justify-content-center align-items-center">
+                  <div class="col-4">
+                    <input
+                      type="checkbox"
+                      id="ExtraInfo"
+                      name="ExtraInfo"
+                      value=""
+                    />
+                    <label for="ExtraInfo"> ExtraInfo</label>
+                  </div>
+                  <div class="col-6">
+                    <input
+                      class="form-control"
+                      type="text"
+                      name="ExtraInfoName"
+                    />
+                  </div>
                 </div>
-              </form>
+              </div>
+              <!--Button To Add Extra info inserting this as col-9 instead of col-10 looked better can play with columns to align nice.-->
+              <div class="row justify-content-center align-items-center">
+                <div class="col-9">
+                  <button
+                    class="btn btn-outline-secondary p-1 ratio ratio-1x1"
+                    onclick="AddExtraInfo()"
+                  >
+                    <i class="fas fa-plus fa-sm abrightblue"></i>
+                  </button>
+                  <label for="Characters"> Add ExtraInfo</label>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col">
+                  <label for="AccessRead"> Access read:</label>
+                  <input
+                    class="form-control"
+                    type="text"
+                    name="AccessRead"
+                    value=""
+                  />
+                </div>
+                <div class="col">
+                  <label for="AccessWrite">Access wirte:</label>
+                  <input class="form-control" type="text" name="AccessWrite" />
+                </div>
+              </div>
+              <div class="text-center">
+                <button type="button" class="btn menuitem menuitemSm">
+                  <i class="fas fa-save abrightblue"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      <template id="AddExtraInfo">
+        <div class="row justify-content-center align-items-center">
+          <div class="col-4">
+            <input type="checkbox" id="ExtraInfo" name="ExtraInfo" value="" />
+            <label for="ExtraInfo"> ExtraInfo</label>
+          </div>
+          <div class="col-6">
+            <input class="form-control" type="text" name="ExtraInfoName" />
+          </div>
+        </div>
+      </template>
+
+      <script>
+        //This i just a Demo Function and Not working and not updating the Table Templates for Columns.
+        let ExtraInfoCounter = 1; //Demo Porpouse to Show when clicking +Add extra info
+        function AddExtraInfo() {
+          let template = document.querySelector("#AddExtraInfo");
+          let clone = document.importNode(template.content, true);
+
+          let checkbox = clone.querySelector("#ExtraInfo");
+          checkbox.id += ExtraInfoCounter;
+          checkbox.name += ExtraInfoCounter;
+
+          let label = clone.querySelector("label");
+          label.htmlFor += ExtraInfoCounter;
+          label.innerText += " " + ExtraInfoCounter;
+          //Target Input Text Element
+          clone.querySelector(".form-control").name += ExtraInfoCounter;
+          ++ExtraInfoCounter;
+
+          document.querySelector("#ColumnContainer").appendChild(clone);
+        }
+      </script>
 
       <!--Add Image modal were u either can upload or link image to URL-->
       <div
@@ -579,6 +660,7 @@ By using Quill Editor an option for read and write access is to hide toolbar
             </div>
             <div class="modal-body text-left">
               <form enctype="multipart/form-data">
+                <!--Form to allow files-->
                 <div class="row">
                   <div class="col-5">
                     <div class="form-group">
@@ -601,7 +683,6 @@ By using Quill Editor an option for read and write access is to hide toolbar
                   </div>
                   <div class="col-6 pictureCont">
                     <label for="previewImage">Preview image: </label>
-                    <img src="" alt="PreviewImg" id="previewImage" />
                   </div>
                 </div>
                 <div class="text-center">
@@ -620,18 +701,31 @@ By using Quill Editor an option for read and write access is to hide toolbar
       </div>
 
       <script>
+        /*Script to update small Preview window*/
         imageInput.onchange = (event) => {
           let selectedFile = event.target.files[0];
           if (selectedFile) {
-            previewImage.src = URL.createObjectURL(selectedFile);
+            let image = addPicture.querySelector("img"); //using addpicture sense this modal will only have max 1 img element in it
+            //If Img element exists or not.
+            if (image == null) {
+              CreateImg(URL.createObjectURL(selectedFile));
+            } else {
+              image.src = URL.createObjectURL(selectedFile);
+            }
           }
         };
-        /* for testing image https://picsum.photos/200
+        /* for testing image URL https://picsum.photos/200
          */
         srcLink.onchange = (event) => {
           let selectedValue = event.target.value;
           if (selectedValue) {
-            previewImage.src = selectedValue;
+            let image = addPicture.querySelector("img");
+            //If Img element exists or not.
+            if (image == null) {
+              CreateImg(selectedValue);
+            } else {
+              image.src = selectedValue;
+            }
           }
         };
       </script>
@@ -641,23 +735,40 @@ By using Quill Editor an option for read and write access is to hide toolbar
         let targetImageButton; //Fetch This
         function getTargetImageButton(node) {
           targetImageButton = node;
-          console.log(node);
         }
+
+        //This function is suppose to demo how the modal should act in case of change of image. And incase of missclick not updating an empty image
         function saveImage() {
-          //Target Src Prewview
-          ImageSrc = document.querySelector("#previewImage").src;
-          if (ImageSrc) {
-            targetImageButton.innerHTML = `<div class="pictureCont image-scen"><img src="${ImageSrc}" alt="Picture that describe a scene" /> </div>`;
-          }
-          console.log(ImageSrc);
-          //If Empty Do nothing just hide Modal
+          //Target image Prewview
 
           //If not Empty write image to Button :)
+          let image = addPicture.querySelector("img");
+
+          if (image != null) {
+            console.log("Not Empty");
+            const clone = image.cloneNode(true); //Clone image
+            console.log(clone);
+            console.log(targetImageButton);
+            targetImageButton.innerHTML =
+              '<div class="pictureCont image-scen"></div>'; //Writing innerHtml to  remove the Icon and also adding the container that sieze the image
+            targetImageButton.querySelector(".pictureCont").appendChild(clone);
+          }
+
+          //If Empty Do nothing just hide Modal
           $("#addPicture").modal("hide");
           //Clear the InputFields
-          document.querySelector("#srcLink").value = "";
+          document.querySelector("#srcLink").value = ""; //Resetting the values
           document.querySelector("#imageInput").value = "";
-          document.querySelector("#previewImage").src = "";
+          if (image != null) {
+            addPicture.querySelector("img").remove(); //Removeing image element for next td or update:)
+          }
+        }
+
+        function CreateImg(imageSrc) {
+          image = document.createElement("img");
+          image.src = imageSrc;
+          image.alt = "Picture that describe a scene";
+          document.querySelector(".pictureCont").appendChild(image);
         }
       </script>
 
